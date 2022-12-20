@@ -17,6 +17,7 @@
     }
     div[data-value="0"] {
       opacity: 0;
+      user-select: none;
     }
     div[data-value="1"] {
       background-color: red;
@@ -36,15 +37,18 @@
     div[data-value="6"] {
       background-color: GREEN;
     }
+    div[valid-empty-area="1"] {
+      border: 1px solid #fff;
+    }
     board {
-      min-height: 100vh;
+      /* min-height: 100vh; */
       display: flex;
       flex-direction: column;
       gap: 5px;
     }
     board row {
       display: flex;
-      gap: 5px;
+      gap: 10px;
     }
     row div {
       width: 30px;
@@ -52,9 +56,13 @@
       border: 1px solid rgba(136, 136, 136, 0.836);
       border-radius: 100px;
     }
+    body div {
+      display: flex;
+      justify-content: center;
+    }
   </style>
   <body>
-    <board></board>
+    <div><board></board></div>
   </body>
   <script type="text/javascript" src="main.js"></script>
 </html>
