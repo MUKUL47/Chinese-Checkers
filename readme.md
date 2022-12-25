@@ -1,0 +1,3 @@
+# Chinese Checkers [WIP]
+
+### Chinese checkers coded with react-ts, this is a WIP for online multiplayer game upto 6 players...
