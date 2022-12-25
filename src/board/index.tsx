@@ -17,13 +17,14 @@ export default function ChineseCheckersGame({
   const [{ service }, setService] = useState({
     service: chineseCheckersService,
   });
+  const activePlayer = service.getActivePlayer();
   useEffect(() => {
     setService({ service: new ChineseCheckers(onPlayerCountChange) });
   }, [onPlayerCountChange]);
 
   useEffect(() => {
-    activePlayerChange(service.getActivePlayer());
-  }, [service.getActivePlayer()]);
+    activePlayerChange(activePlayer);
+  }, [activePlayer]);
 
   const onTileClick = (c: Coordinate) =>
     setService({ service: service.onTileClick(c) });
