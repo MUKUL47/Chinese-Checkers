@@ -4,4 +4,4 @@
 
 #### <a href="https://classy-caramel-96c7c0.netlify.app">Play Name (Demo)</a>
 
-<!-- <img src="https://github.com/MUKUL47/PACMAN/blob/master/assets/DEMO.png" /> -->
+<img src="https://github.com/MUKUL47/Chinese-Checkers/blob/main/src/assets/demo.PNG" />
