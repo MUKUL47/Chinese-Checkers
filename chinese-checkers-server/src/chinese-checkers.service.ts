@@ -353,6 +353,26 @@ export default class ChineseCheckers extends GameConfig {
   }
   //controllable
 
+  public assignParticipantsPositions(participants: {
+    [id: string]: any;
+  }): void {
+    let c = 0;
+    for (let p in participants) {
+      participants[p] = this.gameplaySequence[c++];
+    }
+  }
+
+  public removeUserFromBoard(n: number) {
+    this.playersCount--;
+    if (!this.playersCount) return;
+    delete this.players[n];
+    for (let i = 0; i < this.boardI; i++) {
+      for (let j = 0; j < this.boardJ; j++) {
+        if (this.board[i][j] == n) this.board[i][j] = -1;
+      }
+    }
+  }
+
   public onTileClick({ i, j }: Coordinate): this {
     //if tile is -1 => empty tile check if any tile is selected assign else return
     if (this.board[i][j] === -1) {

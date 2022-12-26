@@ -4,7 +4,7 @@ export type Room = {
   ownerId: string;
   gameState: ChineseCheckers;
   userLimit: 1 | 2 | 3 | 4 | 5 | 6;
-  participants: { [userId: string]: true };
+  participants: { [userId: string]: true | number };
 };
 export type Rooms = {
   [roomId: string]: Room;
@@ -22,6 +22,7 @@ export enum ClientEvents {
   RESTART_GAME = "RESTART_GAME",
   CREATE_ROOM = "CREATE_ROOM",
   UPDATE_USER_LIMIT = "UPDATE_USER_LIMIT",
+  MAKE_MOVE = "MAKE_MOVE",
 }
 export type RoomServiceParam<T = unknown> = {
   roomId: string;
