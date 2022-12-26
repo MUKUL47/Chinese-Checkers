@@ -1,38 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import CheckerTile from "./checker-tile";
 import ChineseCheckers, { Coordinate } from "./chinese-checkers.service";
 import "./game.css";
-interface Props extends Partial<React.ReactElement<HTMLDivElement>> {
-  onPlayerCountChange: number;
-  activePlayerChange: (n: number) => void;
-}
-export default function ChineseCheckersGame({
-  activePlayerChange,
-  onPlayerCountChange,
-}: Props) {
-  const chineseCheckersService = useMemo(
-    () => new ChineseCheckers(onPlayerCountChange),
-    []
-  );
-  const [{ service }, setService] = useState({
-    service: chineseCheckersService,
-  });
-  const activePlayer = service.getActivePlayer();
-  useEffect(() => {
-    setService({ service: new ChineseCheckers(onPlayerCountChange) });
-  }, [onPlayerCountChange]);
-
-  useEffect(() => {
-    activePlayerChange(activePlayer);
-  }, [activePlayer]);
+import { SocketContext } from "../socket-context/socket.context";
+import { ClientEvents, SocketContext as ISocketContext } from "../types";
+interface Props extends Partial<React.ReactElement<HTMLDivElement>> {}
+export default function ChineseCheckersGame({}: Props) {
+  const socketContext: ISocketContext = useContext(SocketContext);
+  const room = socketContext.room;
+  const game = room?.gameState;
 
   const onTileClick = (c: Coordinate) =>
-    setService({ service: service.onTileClick(c) });
-
+    socketContext.sentEvent?.(ClientEvents.MAKE_MOVE, {
+      roomId: room?.roomId,
+      coordinates: c,
+    });
+  const coordinateHasEmptyHop = (c: Coordinate): boolean => {
+    return !!game?.validPlayerHops.find(({ i, j }) => c.i == i && c.j == j);
+  };
+  const isTileSelected = ({ i, j }: Coordinate): boolean => {
+    return game?.selectedTile?.i == i && game?.selectedTile?.j == j;
+  };
   return (
     <div className="game-board">
       <div className="board">
-        {service.getBoard().map((row, i) => {
+        {game?.board.map((row, i) => {
           const rowChildren: React.ReactNode[] = [];
           row.forEach((data, j) => {
             rowChildren.push(
@@ -41,8 +33,10 @@ export default function ChineseCheckersGame({
                 i={i}
                 j={j}
                 data={data}
-                service={service}
                 onTileClick={onTileClick}
+                activePlayer={game.activePlayer}
+                coordinateHasEmptyHop={coordinateHasEmptyHop}
+                isTileSelected={isTileSelected}
               />
             );
           });

@@ -34,8 +34,14 @@ export class BoardAttributes {
 class GameConfig {
   public readonly boardI: number = 17;
   public readonly playersSquence = [1, 2, 3, 6, 4, 8]; //
+  /**
+   * {
+   * 2->1,
+   * 3->6,
+   * }
+   */
   public readonly boardJ: number = 13;
-  public readonly gameplaySequence = [2, 6, 4, 1, 3, 8]; //active player counter
+  public readonly gameplaySequence = [1, 4, 6, 2, 8, 3]; //[2, 6, 4, 1, 3, 8]; //active player counter
 
   public readonly playersMap: PlayersMap = {
     RED: 1,
@@ -358,7 +364,12 @@ export default class ChineseCheckers extends GameConfig {
   }): void {
     let c = 0;
     for (let p in participants) {
-      participants[p] = this.gameplaySequence[c++];
+      if (!c) {
+        participants[p] = ++c;
+      } else {
+        participants[p] = c % 2 !== 0 ? c * 2 : c + 1;
+        c++;
+      }
     }
   }
 
@@ -366,6 +377,9 @@ export default class ChineseCheckers extends GameConfig {
     this.playersCount--;
     if (!this.playersCount) return;
     delete this.players[n];
+    if (this.activePlayer === n) {
+      this.setPlayerActive();
+    }
     for (let i = 0; i < this.boardI; i++) {
       for (let j = 0; j < this.boardJ; j++) {
         if (this.board[i][j] == n) this.board[i][j] = -1;

@@ -35,7 +35,7 @@ class GameConfig {
   public readonly boardI: number = 17;
   public readonly playersSquence = [1, 2, 3, 6, 4, 8]; //
   public readonly boardJ: number = 13;
-  public readonly gameplaySequence = [2, 6, 4, 1, 3, 8]; //active player counter
+  public readonly gameplaySequence = [1, 4, 6, 2, 8, 3]; //[2, 6, 4, 1, 3, 8]; //active player counter
 
   public readonly playersMap: PlayersMap = {
     RED: 1,
@@ -301,13 +301,13 @@ class GameConfig {
   ];
 }
 export default class ChineseCheckers extends GameConfig {
-  private board: ReferenceBoard = [];
+  public board: ReferenceBoard = [];
   public validPlayerHops: Coordinate[] = [];
-  private playersCount: number = 6;
-  private activePlayerCounter = 0;
-  private activePlayer = this.gameplaySequence[this.activePlayerCounter];
-  private players: { [number: string]: true } = {};
-  private selectedTile: {
+  public playersCount: number = 6;
+  public activePlayerCounter = 0;
+  public activePlayer = this.gameplaySequence[this.activePlayerCounter];
+  public players: { [number: string]: true } = {};
+  public selectedTile: {
     i: number;
     j: number;
     value?: number | string;
@@ -352,6 +352,26 @@ export default class ChineseCheckers extends GameConfig {
     ];
   }
   //controllable
+
+  public assignParticipantsPositions(participants: {
+    [id: string]: any;
+  }): void {
+    let c = 0;
+    for (let p in participants) {
+      participants[p] = this.gameplaySequence[c++];
+    }
+  }
+
+  public removeUserFromBoard(n: number) {
+    this.playersCount--;
+    if (!this.playersCount) return;
+    delete this.players[n];
+    for (let i = 0; i < this.boardI; i++) {
+      for (let j = 0; j < this.boardJ; j++) {
+        if (this.board[i][j] == n) this.board[i][j] = -1;
+      }
+    }
+  }
 
   public onTileClick({ i, j }: Coordinate): this {
     //if tile is -1 => empty tile check if any tile is selected assign else return

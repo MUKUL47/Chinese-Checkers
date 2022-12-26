@@ -1,5 +1,5 @@
 import React from "react";
-import { _class } from "../App";
+import { _class } from "./App";
 import ChineseCheckers, {
   BoardClasses,
   Coordinate,
@@ -8,15 +8,19 @@ interface Props extends Partial<React.ReactElement<HTMLDivElement>> {
   i: number;
   j: number;
   data: number | string;
-  service: ChineseCheckers;
+  coordinateHasEmptyHop: (c: Coordinate) => boolean;
+  isTileSelected: (c: Coordinate) => boolean;
+  activePlayer: number;
   onTileClick: (c: Coordinate) => void;
 }
 export default function CheckerTile({
   data,
   i,
   j,
+  coordinateHasEmptyHop,
+  isTileSelected,
+  activePlayer,
   onTileClick,
-  service,
 }: Props) {
   return (
     <div
@@ -26,10 +30,10 @@ export default function CheckerTile({
       data-value={data}
       className={_class(
         data === -1 &&
-          service.coordinateHasEmptyHop({ i, j }) &&
+          coordinateHasEmptyHop({ i, j }) &&
           BoardClasses.TILE_MOVABLE_AREA,
-        service.isTileSelected({ i, j }) && BoardClasses.VALID_TILE_SELECTED,
-        service.getActivePlayer() === data && BoardClasses.ACTIVE_PLAYER
+        isTileSelected({ i, j }) && BoardClasses.VALID_TILE_SELECTED,
+        activePlayer === data && BoardClasses.ACTIVE_PLAYER
       )}
       onClick={() => onTileClick({ i, j })}
     />

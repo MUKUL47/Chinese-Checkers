@@ -11,18 +11,23 @@ export default class RoomService {
     newRoom: Room;
     roomId: string;
   } {
-    const roomId = `${Date.now()}.${Math.random()}`;
-    const gameState = new ChineseCheckers(1);
-    const newRoom: Room = {
-      createdAt: Date.now(),
-      ownerId: id,
-      gameState,
-      participants: { [id]: true },
-      userLimit: 1,
-    };
-    gameState.assignParticipantsPositions(newRoom.participants);
-    this.rooms[roomId] = newRoom;
-    return { roomId, newRoom };
+    try {
+      const roomId = `${Date.now()}`;
+      const gameState = new ChineseCheckers(1);
+      const newRoom: Room = {
+        createdAt: Date.now(),
+        ownerId: id,
+        gameState,
+        roomId,
+        participants: { [id]: true },
+        userLimit: 1,
+      };
+      gameState.assignParticipantsPositions(newRoom.participants);
+      this.rooms[roomId] = newRoom;
+      return { roomId, newRoom };
+    } catch (e) {
+      return RoomService._error(e);
+    }
   }
   public enterRoom({ roomId, id }: Partial<RoomServiceParam>): Room | string {
     try {
@@ -34,21 +39,28 @@ export default class RoomService {
       room.gameState.assignParticipantsPositions(room.participants);
       return room;
     } catch (e) {
-      return this._error(e);
+      return RoomService._error(e);
     }
   }
 
   public leaveRoom({
-    roomId,
+    // roomId,
     id,
   }: Partial<RoomServiceParam>): Room | string | true {
     try {
-      const room = this.getRoomById(roomId);
+      let room: Room;
+      for (let r in this.rooms) {
+        if (this.rooms[r].participants[id]) {
+          room = this.rooms[r];
+          break;
+        }
+      }
+      if (!room) return true;
       room.userLimit -= 1;
       //if userlimit is 0 => delete that room
       //if userlimit > 0 and if leader left assign top pariticipant and dont restart
       if (!room.userLimit) {
-        delete this.rooms[roomId];
+        delete this.rooms[room.roomId];
         return true;
       }
       room.gameState.removeUserFromBoard(room.participants[id] as number);
@@ -59,31 +71,9 @@ export default class RoomService {
       }
       return room;
     } catch (e) {
-      return this._error(e);
+      return RoomService._error(e);
     }
   }
-
-  // public updateUserLimit({
-  //   roomId,
-  //   data,
-  //   id,
-  // }: Partial<RoomServiceParam<{ limit: any }>>): Room | string {
-  //   try {
-  //     const room = this.getRoomById(roomId);
-  //     if (room.ownerId != id)
-  //       return "Only owner can update the participant limit";
-  //     let { limit } = data;
-  //     limit = Number(limit);
-  //     if (!isNaN(data.limit) || data.limit < 1 || data.limit > 6)
-  //       return "Limit is invalid";
-  //     room.userLimit = limit;
-  //     room.gameState = new ChineseCheckers(room.userLimit); //restart the game
-  //     room.gameState.assignParticipantsPositions(room.participants);
-  //     return room;
-  //   } catch (e) {
-  //     return this._error(e);
-  //   }
-  // }
 
   public makeMove({
     roomId,
@@ -94,13 +84,13 @@ export default class RoomService {
       const room = this.getRoomById(roomId);
       if (room.gameState.getActivePlayer() != room.participants[id])
         return "Invalid move (Please wait for your chance)";
-      room.gameState = room.gameState.onTileClick({
+      room.gameState.onTileClick({
         i: data.coordinates.i,
         j: data.coordinates.j,
       });
       return room;
     } catch (e) {
-      return this._error(e);
+      return RoomService._error(e);
     }
   }
 
@@ -109,7 +99,7 @@ export default class RoomService {
     return this.rooms[roomId];
   }
 
-  private _error(e: any) {
+  public static _error(e: any) {
     return (typeof e !== "string" && "Something went wrong") || e;
   }
 }
