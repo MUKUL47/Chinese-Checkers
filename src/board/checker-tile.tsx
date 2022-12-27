@@ -1,9 +1,6 @@
 import React from "react";
 import { _class } from "./App";
-import ChineseCheckers, {
-  BoardClasses,
-  Coordinate,
-} from "./chinese-checkers.service";
+import { BoardClasses, Coordinate } from "./chinese-checkers.service";
 interface Props extends Partial<React.ReactElement<HTMLDivElement>> {
   i: number;
   j: number;

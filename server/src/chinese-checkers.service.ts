@@ -313,6 +313,7 @@ export default class ChineseCheckers extends GameConfig {
   private activePlayerCounter = 0;
   private activePlayer = this.gameplaySequence[this.activePlayerCounter];
   private players: { [number: string]: true } = {};
+  public winners: number[] = [];
   private selectedTile: {
     i: number;
     j: number;
@@ -321,6 +322,7 @@ export default class ChineseCheckers extends GameConfig {
   constructor(playerCount: number = 2) {
     super();
     this.playersCount = playerCount;
+    this.winners = [];
     this.players = Array(this.playersCount)
       .fill(1)
       .reduce((a, c, i) => {
@@ -399,6 +401,7 @@ export default class ChineseCheckers extends GameConfig {
       this.board[i][j] = this.selectedTile.value;
       this.selectedTile = null;
       this.validPlayerHops = [];
+      this.checkWinner();
       this.setPlayerActive();
       return this;
     }
@@ -407,6 +410,30 @@ export default class ChineseCheckers extends GameConfig {
       this.validPlayerHops = this.getAllValidNeighbours();
     }
     return this;
+  }
+
+  private checkWinner() {
+    if (this.playersCount === this.winners.length) return;
+    const playerTarget =
+      (this.activePlayer % 2 === 0 && this.activePlayer / 2) ||
+      this.activePlayer * 2;
+    let c = 0;
+    let won = false;
+    for (let i = 0; i < this.boardI; i++) {
+      for (let j = 0; j < this.boardI; j++) {
+        const reference = this.referenceBoard[i][j];
+        if (
+          reference === playerTarget &&
+          this.board[i][j] === this.activePlayer
+        )
+          c++;
+        if (c === 10) {
+          won = true;
+          break;
+        }
+      }
+    }
+    won && this.winners.push(this.activePlayer);
   }
 
   public coordinateHasEmptyHop(c: Coordinate): boolean {

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import CheckerTile from "./checker-tile";
-import ChineseCheckers, { Coordinate } from "./chinese-checkers.service";
+import { Coordinate, IChineseCheckers } from "./chinese-checkers.service";
 import "./game.css";
 import { SocketContext } from "../socket-context/socket.context";
 import { ClientEvents, SocketContext as ISocketContext } from "../types";
@@ -8,7 +8,7 @@ interface Props extends Partial<React.ReactElement<HTMLDivElement>> {}
 export default function ChineseCheckersGame({}: Props) {
   const socketContext: ISocketContext = useContext(SocketContext);
   const room = socketContext.room;
-  const game = room?.gameState;
+  const game: IChineseCheckers = room?.gameState;
 
   const onTileClick = (c: Coordinate) =>
     socketContext.sentEvent?.(ClientEvents.MAKE_MOVE, {
