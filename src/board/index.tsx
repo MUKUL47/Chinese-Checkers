@@ -9,7 +9,6 @@ export default function ChineseCheckersGame({}: Props) {
   const socketContext: ISocketContext = useContext(SocketContext);
   const room = socketContext.room;
   const game: IChineseCheckers = room?.gameState!;
-
   const onTileClick = (c: Coordinate) =>
     socketContext.sentEvent?.(ClientEvents.MAKE_MOVE, {
       roomId: room?.roomId,

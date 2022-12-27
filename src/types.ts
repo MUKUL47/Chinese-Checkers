@@ -15,7 +15,6 @@ export type Rooms = {
 export enum ServerEvents {
   ROOM_CREATED = "ROOM_CREATED",
   GAME_RESTARTED = "GAME_RESTARTED",
-  BOARD_UPDATE = "BOARD_UPDATE",
   ERROR = "ERROR",
   UPDATE_BOARD = "UPDATE_BOARD",
 }
@@ -24,9 +23,8 @@ export enum ClientEvents {
   LEAVE_ROOM = "LEAVE_ROOM",
   RESTART_GAME = "RESTART_GAME",
   CREATE_ROOM = "CREATE_ROOM",
-  UPDATE_USER_LIMIT = "UPDATE_USER_LIMIT",
   MAKE_MOVE = "MAKE_MOVE",
-  DISCONNECT = "disconnected",
+  DISCONNECT = "disconnect",
 }
 export type RoomServiceParam<T = unknown> = {
   roomId: string;

@@ -75,6 +75,16 @@ export default class RoomService {
     }
   }
 
+  public restartGame({ roomId }: Partial<RoomServiceParam>): Room {
+    try {
+      const room = this.getRoomById(roomId);
+      room.gameState = new ChineseCheckers(room.userLimit);
+      room.gameState.assignParticipantsPositions(room.participants);
+      return room;
+    } catch (e) {
+      return RoomService._error(e);
+    }
+  }
   public makeMove({
     roomId,
     data,

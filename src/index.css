@@ -71,8 +71,14 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
 }
+.flex-col {
+  flex-direction: column;
+}
 .gap-1 {
   gap: 1rem;
+}
+.gap-2 {
+  gap: 2rem;
 }
 .game-details_teamselect {
   font-size: 27px;
@@ -103,7 +109,26 @@ section {
   border: unset;
   text-align: center;
 }
-
+.user-select-none {
+  user-select: none;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.chinese-checkers {
+  height: 85vh;
+}
+.game-ranking td,
+.game-ranking th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  border-radius: 5px;
+  text-align: center;
+}
+.game-ranking td:nth-child(2) {
+  width: 120px;
+}
 @media only screen and (max-width: 600px) {
   .room-section h1 {
     font-size: 1.5rem;

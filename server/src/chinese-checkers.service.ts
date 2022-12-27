@@ -391,6 +391,7 @@ export default class ChineseCheckers extends GameConfig {
 
   public onTileClick({ i, j }: Coordinate): this {
     //if tile is -1 => empty tile check if any tile is selected assign else return
+    if (this.winners.includes(this.activePlayer)) return this;
     if (this.board[i][j] === -1) {
       if (
         !this.selectedTile?.value ||
@@ -412,15 +413,30 @@ export default class ChineseCheckers extends GameConfig {
     return this;
   }
 
+  private setPlayerActive(): number {
+    //if everyone won -> dont move
+    if (this.winners.length === this.playersCount) return;
+    do {
+      this.activePlayer = this.gameplaySequence[++this.activePlayerCounter % 6];
+    } while (
+      !this.players[this.activePlayer] || //if player not found in sequence move to next player
+      this.winners.includes(this.activePlayer) //excluding all winners
+    );
+    return this.activePlayer;
+  }
   private checkWinner() {
-    if (this.playersCount === this.winners.length) return;
+    if (
+      this.playersCount === this.winners.length ||
+      this.winners.includes(this.activePlayer)
+    )
+      return;
     const playerTarget =
       (this.activePlayer % 2 === 0 && this.activePlayer / 2) ||
       this.activePlayer * 2;
     let c = 0;
     let won = false;
     for (let i = 0; i < this.boardI; i++) {
-      for (let j = 0; j < this.boardI; j++) {
+      for (let j = 0; j < this.boardJ; j++) {
         const reference = this.referenceBoard[i][j];
         if (
           reference === playerTarget &&
@@ -444,13 +460,6 @@ export default class ChineseCheckers extends GameConfig {
     return this.selectedTile?.i == i && this.selectedTile?.j == j;
   }
 
-  private setPlayerActive(): number {
-    do {
-      this.activePlayer = this.gameplaySequence[++this.activePlayerCounter % 6];
-    } while (!this.players[this.activePlayer]);
-    return this.activePlayer;
-  }
-
   public getAllValidNeighbours = (): Coordinate[] => {
     if (!this.selectedTile) return [];
     const defaultNeighbours = this.getNeighbours(this.selectedTile);
@@ -461,17 +470,17 @@ export default class ChineseCheckers extends GameConfig {
       ({ i, j }) => this.board[i]?.[j] > 0
     );
     if (!occupiedMoves.length) return defaultNeighbours;
-    const visitedTiles: { [coords: string]: true } = {
-      [`${this.selectedTile.i},${this.selectedTile.j}`]: true,
-    };
+    const visitedTiles: Set<string> = new Set(
+      `${this.selectedTile.i},${this.selectedTile.j}`
+    );
     const findAllEmptyHops = (
-      visitedTiles: { [coords: string]: true },
+      visitedTiles: Set<string>,
       neighbouringMoves: Coordinate[], //occupiedMoves
       hops: Coordinate[] = [],
       currentHop: Coordinate
     ) => {
       for (let neighbour of neighbouringMoves) {
-        visitedTiles[`${neighbour.i},${neighbour.j}`] = true;
+        visitedTiles.add(`${neighbour.i},${neighbour.j}`);
         //calculate valid hop for each neighbour
         const prevI = currentHop.i;
         const prevJ = currentHop.j;
@@ -492,7 +501,8 @@ export default class ChineseCheckers extends GameConfig {
           const hop = { i: newI, j: newJ }; //some calculate hop func
           hops.push(hop);
           const hopNeighbours = this.getNeighbours(hop).filter(
-            (v) => !visitedTiles[`${v.i},${v.j}`] && this.board[v.i][v.j] > 0
+            (v) =>
+              !visitedTiles.has(`${v.i},${v.j}`) && this.board[v.i][v.j] > 0
           );
           if (hopNeighbours.length)
             findAllEmptyHops(visitedTiles, hopNeighbours, hops, hop);

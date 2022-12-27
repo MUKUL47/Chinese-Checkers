@@ -10,6 +10,7 @@ export default class EventService {
       s.on(ClientEvents.CREATE_ROOM, () => this.createRoom(s));
       s.on(ClientEvents.ENTER_ROOM, (data) => this.enterRoom(s, data));
       s.on(ClientEvents.MAKE_MOVE, (data) => this.makeMove(s, data));
+      s.on(ClientEvents.RESTART_GAME, (data) => this.restartGame(s, data));
       s.on("disconnect", (data) => this.removeFromRoom(s, data));
     });
   }
@@ -58,6 +59,18 @@ export default class EventService {
     if (typeof response === "string") return this.handleError(s, response);
     s.to(roomId).emit(ServerEvents.UPDATE_BOARD, this._payload(response));
     s.emit(ServerEvents.UPDATE_BOARD, this._payload(response));
+  };
+
+  private restartGame = (s: Socket, data: any) => {
+    const { roomId } = data;
+    const response = this.roomService.restartGame({
+      roomId,
+      id: s.id,
+    });
+    if (typeof response === "string") return this.handleError(s, response);
+    const r = this._payload(response, "Game restarted");
+    s.to(response.roomId).emit(ServerEvents.GAME_RESTARTED, r);
+    s.emit(ServerEvents.GAME_RESTARTED, r);
   };
 
   private _payload(room: Room, message?: string) {

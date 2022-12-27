@@ -9,10 +9,10 @@ export default class SocketService {
 
   public onEventCallback(cb: OnEventCallback): void {
     [
-      ServerEvents.BOARD_UPDATE,
       ServerEvents.ERROR,
       ServerEvents.ROOM_CREATED,
       ServerEvents.UPDATE_BOARD,
+      ServerEvents.GAME_RESTARTED,
     ].forEach((e) => this.socket.on(e, (data) => cb(e, data)));
   }
 
