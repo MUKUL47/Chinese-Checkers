@@ -1,11 +1,11 @@
-import ChineseCheckers from "./board/chinese-checkers.service";
+import { IChineseCheckers } from "./board/chinese-checkers.service";
 import { io, Socket } from "socket.io-client";
 
 export type Room = {
   createdAt: number;
   ownerId: string;
   roomId: string;
-  gameState: ChineseCheckers;
+  gameState: IChineseCheckers;
   userLimit: 1 | 2 | 3 | 4 | 5 | 6;
   participants: { [userId: string]: true | number };
 };

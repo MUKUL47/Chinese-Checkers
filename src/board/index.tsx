@@ -8,7 +8,7 @@ interface Props extends Partial<React.ReactElement<HTMLDivElement>> {}
 export default function ChineseCheckersGame({}: Props) {
   const socketContext: ISocketContext = useContext(SocketContext);
   const room = socketContext.room;
-  const game: IChineseCheckers = room?.gameState;
+  const game: IChineseCheckers = room?.gameState!;
 
   const onTileClick = (c: Coordinate) =>
     socketContext.sentEvent?.(ClientEvents.MAKE_MOVE, {
@@ -16,7 +16,7 @@ export default function ChineseCheckersGame({}: Props) {
       coordinates: c,
     });
   const coordinateHasEmptyHop = (c: Coordinate): boolean => {
-    return !!game?.validPlayerHops.find(({ i, j }) => c.i == i && c.j == j);
+    return game?.validPlayerHops.some(({ i, j }) => c.i == i && c.j == j);
   };
   const isTileSelected = ({ i, j }: Coordinate): boolean => {
     return game?.selectedTile?.i == i && game?.selectedTile?.j == j;
