@@ -4,7 +4,7 @@ type OnEventCallback = (e: ServerEvents, response: any) => void;
 export default class SocketService {
   private socket: Socket;
   constructor() {
-    this.socket = io(`http://localhost:8080`);
+    this.socket = io(window.location.origin);
   }
 
   public onEventCallback(cb: OnEventCallback): void {

@@ -15,5 +15,4 @@ app.get("/", async (req: any, res: any, next: any) =>
 app.get("/test", async (req: any, res: any, next: any) => res.send("test"));
 server.listen(process.env.PORT || "8080", () => {
   console.log(`STARTED AT ${process.env.PORT || "8080"}`);
-  console.log(`STARTED AT ${JSON.stringify(process.env, null, 1) || "8080"}`);
 });
