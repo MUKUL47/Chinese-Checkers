@@ -7,7 +7,7 @@
     "dev": "env-cmd -f .env.dev cross-env NODE_PATH=./src nodemon src/index.ts",
     "start": "env-cmd -f .env.prod node build/index.js",
     "build": "npm i && tsc -p . ",
-    "build:prod": "npm i && npm --prefix ./client run build"
+    "build:prod": "npm i -g typescript && npm i && npm --prefix ./client run build"
   },
   "author": "",
   "license": "ISC",
