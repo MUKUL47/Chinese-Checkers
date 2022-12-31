@@ -1,12 +1,10 @@
-import { IChineseCheckers } from "./board/chinese-checkers.service";
-import { io, Socket } from "socket.io-client";
-
+import ChineseCheckers from "chinese-checkers.service";
 export type Room = {
   createdAt: number;
   ownerId: string;
-  roomId: string;
-  gameState: IChineseCheckers;
+  gameState: ChineseCheckers;
   userLimit: 1 | 2 | 3 | 4 | 5 | 6;
+  roomId: string;
   participants: { [userId: string]: true | number };
 };
 export type Rooms = {
@@ -24,17 +22,10 @@ export enum ClientEvents {
   RESTART_GAME = "RESTART_GAME",
   CREATE_ROOM = "CREATE_ROOM",
   MAKE_MOVE = "MAKE_MOVE",
-  DISCONNECT = "disconnect",
+  DISCONNECT = "disconnected",
 }
 export type RoomServiceParam<T = unknown> = {
   roomId: string;
   id: string;
   data: T;
-};
-export type SentEvent = (event: ClientEvents, data?: Object) => void;
-
-export type SocketContext = {
-  socket?: Socket;
-  room: Room | null;
-  sentEvent?: SentEvent;
 };
