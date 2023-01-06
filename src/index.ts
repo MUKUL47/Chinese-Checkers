@@ -16,3 +16,6 @@ app.get("/test", async (req: any, res: any, next: any) => res.send("test"));
 server.listen(process.env.PORT || "8080", () => {
   console.log(`STARTED AT ${process.env.PORT || "8080"}`);
 });
+if (process.env.KEEP_ALIVE && !isNaN(Number(process.env.KEEP_ALIVE))) {
+  setInterval(() => console.log(Date.now()), Number(process.env.KEEP_ALIVE));
+}
